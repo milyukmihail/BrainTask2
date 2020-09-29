@@ -3,21 +3,43 @@
  <head>
   <meta charset="utf-8">
   <title>Ajax</title>
+  <script
+  src="http://code.jquery.com/jquery-1.12.4.js"
+  integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU="
+  crossorigin="anonymous"></script>
  </head>
- <body> 
-<form id="show" method="POST" name="show" action="filter.php"><br>
+ <body>
+
   Показать товары, у которых
-	<select name="Price" size="1">
+	<select id="price" name="price" size="1">
     <option value="cost">Розничная цена</option>
     <option value="cost_wholesale">Оптовая цена</option>
   </select>&nbsp; &nbsp;от&nbsp;
-  <input name="ot" size="8" type="text" value="1000">&nbsp; &nbsp;до&nbsp;
-  <input name="do" size="8" type="text" value="3000">&nbsp; &nbsp;рублей и на складе&nbsp;
-  <select name="znak">
+  <input id="ot" name="ot" size="8" type="text" value="1000">&nbsp; &nbsp;до&nbsp;
+  <input id="do" name="do" size="8" type="text" value="3000">&nbsp; &nbsp;рублей и на складе&nbsp;
+  <select id="znak" name="znak">
     <option value="bolee">Более</option>
     <option value="menee">Менее</option>
-  </select>&nbsp; &nbsp;<input name="quantity" size="10" type="text" value="20">&nbsp;штук.&nbsp;
-  <input name="submit" type="submit" value="Показать товары" id="button">&nbsp;</form>
+  </select>&nbsp; &nbsp;<input id="quantity" name="quantity" size="10" type="text" value="20">&nbsp;штук.&nbsp;
+  <button name="submit" type="submit" value="Показать товары" id="button">Показать товары</button>&nbsp;
+
+  <p id="hello"></p>
+
+<script>
+  $("#button").click(function () {
+    var params = {
+      ot: $("#ot").val(),
+      do: $("#do").val(),
+      price: $("#price").val(),
+      znak: $("#znak").val(),
+      quantity: $("#quantity").val(),
+    }
+    $.post("filter.php", params, function (data) {
+      $("#hello").html(data);
+    });
+  });
+</script>
+
  </body>
 </html>
 

@@ -1,0 +1,50 @@
+<?php $filter = $_GET["sort"]; ?>
+<div id="filter-val" data-filter="<?php echo $filter; ?>"></div>
+
+<form id="filter-form" method="GET" action="filter.php">
+      <ul class="checkbox-filter">
+          <li>
+              <input type="checkbox" name="sort[]" value="one" id="check"/>
+              <label  class="checkbox" for="checkbrendx">one</label>
+          </li>
+          <li>
+              <input type="checkbox" name="sort[]" value="two" id="check"/>
+              <label  class="checkbox" for="checkbrendx">two</label>
+          </li>
+      </ul>
+      <input type="submit" name="submit" id="button" value="Применить" />
+</form>
+
+<div id="item">
+     <div>one</div> <-- эти блоки из БД (в ячейках указаны значения one или two)
+     <div>two</div> <-- эти блоки из БД (в ячейках указаны значения one или two)
+<div>
+
+
+<script type="text/javascript">
+    function show(url, selector, toSend){ // Функция не нужна внутри события, зачем переопределять
+        $.ajax({ 
+            type: "POST",
+            url: url,
+            data: toSend, // Обратить внимание, что обработчик теперь нужно немного изменить
+            cache: false,
+            success: function(html){
+                $(selector).html(html);
+            }
+        });
+    }
+
+    $('#filter-form').on('submit', function(e) {
+        e.preventDefault();
+        var toSend = $(this).serializeArray(); // Здесь вся инфа с формы
+        var arrFilter = [];
+            arrFilter['name'] = 'filter';
+            arrFilter['value'] = $('#filter-val').data('filter');
+        toSend.push(arrFilter); // Дополняем данные с твоим фильтром
+        show('../functions/filter.php', '#item', toSend); // Видимм третий параметр
+    });
+
+    $(document).on('click', '.checkbox-filter', function(){
+        $('#filter-form').submit(); // инициализиуем отправку при клике (можно так же клик поменять на change)
+    });
+</script>
