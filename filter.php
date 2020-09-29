@@ -2,30 +2,51 @@
 
 require_once 'InBd/Connection.php';
 
-$connection = new Connection();
+class Filter
+{
+    public $connection, $price, $of, $before, $znak, $quantity;
 
-$price = $_POST['price'];
+    public function __construct($price, $of, $before, $znak, $quantity)
+    {
+        $this->connection = new Connection();
 
-$ot = $_POST['ot'];
+        $this->price = $price;
+        $this->of = $of;
+        $this->before = $before;
+        $this->znak = $znak;
+        $this->quantity = $quantity;
+    }
 
-$do = $_POST['do'];
+    public function chooseQuery()
+    {
+        if ($this->znak == 'bolee'){
+            return "SELECT * FROM products.product WHERE (in_stock_1+in_stock_2)>? AND ?<" . $this->price . " AND " . $this->price . "<?";
+        } elseif ($this->znak == 'menee') {
+            return "SELECT * FROM products.product WHERE (in_stock_1+in_stock_2)<? AND ?<" . $this->price . " AND " . $this->price . "<?";
+        } else { return false; }
+    }
 
-$znak = $_POST['znak'];
+    public function bildQuery()
+    {
+        $query = $this->connection->link->prepare($this->chooseQuery());
+        $query->bind_param('iii', $this->quantity, $this->of, $this->before);
+        $query->execute();
 
-$quantity = $_POST['quantity'];
+        return $query->get_result();
+    }
+
+    public function getData()
+    {
+        $arr = $this->bildQuery()->fetch_all();
+        $arr = json_encode($arr, JSON_UNESCAPED_UNICODE);
+        return $arr;
+    }
+
+}
 
 
-$sql = 'SELECT * FROM products.product WHERE (in_stock_1+in_stock_2)<? AND ?<cost AND cost<?';
+$filter = new Filter($_POST['price'], $_POST['of'], $_POST['before'], $_POST['znak'], $_POST['quantity']);
 
-$request = $connection->link->prepare($sql);
-$request->bind_param('iii', $quantity, $ot, $do);
-$request->execute();
 
-$resultSet = $request->get_result();
 
-$text = $_POST["quantity"];
-
-echo 'Привет, ' . $text;
-
-print_r($resultSet->fetch_all());
-
+print_r($filter->getData());

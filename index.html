@@ -9,33 +9,50 @@
   crossorigin="anonymous"></script>
  </head>
  <body>
-
   Показать товары, у которых
 	<select id="price" name="price" size="1">
     <option value="cost">Розничная цена</option>
     <option value="cost_wholesale">Оптовая цена</option>
   </select>&nbsp; &nbsp;от&nbsp;
-  <input id="ot" name="ot" size="8" type="text" value="1000">&nbsp; &nbsp;до&nbsp;
-  <input id="do" name="do" size="8" type="text" value="3000">&nbsp; &nbsp;рублей и на складе&nbsp;
+  <input id="of" name="of" size="8" type="text" value="1000">&nbsp; &nbsp;до&nbsp;
+  <input id="before" name="before" size="8" type="text" value="3000">&nbsp; &nbsp;рублей и на складе&nbsp;
   <select id="znak" name="znak">
     <option value="bolee">Более</option>
     <option value="menee">Менее</option>
   </select>&nbsp; &nbsp;<input id="quantity" name="quantity" size="10" type="text" value="20">&nbsp;штук.&nbsp;
   <button name="submit" type="submit" value="Показать товары" id="button">Показать товары</button>&nbsp;
 
-  <p id="hello"></p>
+  <div id="hello"></div>
 
 <script>
   $("#button").click(function () {
     var params = {
-      ot: $("#ot").val(),
-      do: $("#do").val(),
+      of: $("#of").val(),
+      before: $("#before").val(),
       price: $("#price").val(),
       znak: $("#znak").val(),
       quantity: $("#quantity").val(),
     }
     $.post("filter.php", params, function (data) {
-      $("#hello").html(data);
+      var jsonObj = $.parseJSON(data);
+      console.log(jsonObj);
+      if (jsonObj.length !== 0){
+      var html = '<table border="1">';
+      html += '<tr><th>Id</th><th>Наименование товара</th><th>Стоимость, руб</th><th>Стоимость опт,руб</th><th>Наличие на складе 1, шт</th><th>Наличие на складе 2, шт</th><th>Страна производста</th></tr>';
+        $.each(jsonObj, function(key, value) {
+          html += '<tr>';
+          $.each(value, function(key, value) {
+              html += '<td>' + value + '</td>';
+            });
+            html += '</tr>';
+        });
+        html += '</table>';
+
+        $('#hello').html(html);
+      }
+      else{
+        $("#hello").empty();
+      }
     });
   });
 </script>
