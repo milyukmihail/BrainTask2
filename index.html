@@ -1,63 +1,66 @@
 <!DOCTYPE html>
 <html>
- <head>
-  <meta charset="utf-8">
-  <title>Ajax</title>
-  <script
-  src="http://code.jquery.com/jquery-1.12.4.js"
-  integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU="
-  crossorigin="anonymous"></script>
- </head>
- <body>
-  Показать товары, у которых
-	<select id="price" name="price" size="1">
+<head>
+    <meta charset="utf-8">
+    <title>Ajax</title>
+    <script
+            src="http://code.jquery.com/jquery-1.12.4.js"
+            integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU="
+            crossorigin="anonymous">
+    </script>
+</head>
+<body>
+Показать товары, у которых
+<select id="price" name="price" size="1">
     <option value="cost">Розничная цена</option>
     <option value="cost_wholesale">Оптовая цена</option>
-  </select>&nbsp; &nbsp;от&nbsp;
-  <input id="of" name="of" size="8" type="text" value="1000">&nbsp; &nbsp;до&nbsp;
-  <input id="before" name="before" size="8" type="text" value="3000">&nbsp; &nbsp;рублей и на складе&nbsp;
-  <select id="znak" name="znak">
+</select>
+от
+<input id="of" name="of" size="8" type="text" value="1000">
+до
+<input id="before" name="before" size="8" type="text" value="3000">
+рублей и на складе
+<select id="symbol" name="symbol">
     <option value="bolee">Более</option>
     <option value="menee">Менее</option>
-  </select>&nbsp; &nbsp;<input id="quantity" name="quantity" size="10" type="text" value="20">&nbsp;штук.&nbsp;
-  <button name="submit" type="submit" value="Показать товары" id="button">Показать товары</button>&nbsp;
+</select>&nbsp; &nbsp;<input id="quantity" name="quantity" size="10" type="text" value="20">
+ штук
+<button name="submit" type="submit" value="Показать товары" id="button">Показать товары</button>
 
-  <div id="hello"></div>
+<div id="hello"></div>
 
 <script>
-  $("#button").click(function () {
-    var params = {
-      of: $("#of").val(),
-      before: $("#before").val(),
-      price: $("#price").val(),
-      znak: $("#znak").val(),
-      quantity: $("#quantity").val(),
-    }
-    $.post("filter.php", params, function (data) {
-      var jsonObj = $.parseJSON(data);
-      console.log(jsonObj);
-      if (jsonObj.length !== 0){
-      var html = '<table border="1">';
-      html += '<tr><th>Id</th><th>Наименование товара</th><th>Стоимость, руб</th><th>Стоимость опт,руб</th><th>Наличие на складе 1, шт</th><th>Наличие на складе 2, шт</th><th>Страна производста</th></tr>';
-        $.each(jsonObj, function(key, value) {
-          html += '<tr>';
-          $.each(value, function(key, value) {
-              html += '<td>' + value + '</td>';
-            });
-            html += '</tr>';
+    $("#button").click(function () {
+        var params = {
+            of: $("#of").val(),
+            before: $("#before").val(),
+            price: $("#price").val(),
+            symbol: $("#symbol").val(),
+            quantity: $("#quantity").val(),
+        }
+        $.post("filter.php", params, function (data) {
+            var jsonObj = $.parseJSON(data);
+            if (jsonObj.length !== 0) {
+                var html = '<table border="1">';
+                html += '<tr><th>Id</th><th>Наименование товара</th><th>Стоимость, руб</th><th>Стоимость опт,руб</th><th>Наличие на складе 1, шт</th><th>Наличие на складе 2, шт</th><th>Страна производста</th></tr>';
+                $.each(jsonObj, function (key, value) {
+                    html += '<tr>';
+                    $.each(value, function (key, value) {
+                        html += '<td>' + value + '</td>';
+                    });
+                    html += '</tr>';
+                });
+                html += '</table>';
+
+                $('#hello').html(html);
+            } else {
+                $("#hello").empty();
+                $("#hello").html("Неверное значение параметров!");
+            }
         });
-        html += '</table>';
-
-        $('#hello').html(html);
-      }
-      else{
-        $("#hello").empty();
-      }
     });
-  });
 </script>
-
- </body>
+</body>
 </html>
 
 
